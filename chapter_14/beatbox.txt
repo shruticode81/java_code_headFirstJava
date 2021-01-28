@@ -1,0 +1,52 @@
+//seralizing the pattern of checkbox using boolean array
+
+
+public class MySendListener implements ActionListener{
+	public void actionPerformed(ActionEvent a){ //it all happens when the user clicks the button and the actionevent fires.
+		boolean[] checkboxState = new boolean[256]; //make the array holds the state of the current checkboxs
+		for(int i=0;i<256;i++){
+			JCheckBox check = (JCheckBox) checkboxList.get(i) //it cast to jcheckbox bz arraylist returns object
+			if(check.isSelected()){
+				checkboxState[i] = true; // walk through the checkboxlist array and check the state of each one if selected then add to boolean array
+
+			}
+		}
+		
+		try{
+			FileOutputStream fileStream = new FileOutputStream(new File("checkbox.ser"));
+			ObjectOutputStream os = new ObjectOutputStream(fileStream);
+			os.writeObject(checkboxState);
+		}catch(Exception ex){
+			ex.printStackTrace();
+		}
+	}
+}
+
+//deseriaLizaing the pattern and read the object from the file and restore a pattern
+
+public class MyReadInListener implements ActionListener {
+	public void actionPerformed(ActionEvent a){
+		boolean[] checkboxState = null;
+		try{
+			FileInputStream fileIn = new FileInputStream(new File("checkbox.ser"));
+			ObjectInputStream is = new ObjectInputStream(fileIn);
+			checkboxState = (boolean[]) is.readObject(); //read the single object in the file and cast it back to the boolean array
+
+		} catch(Exception ex){ex.printStackTrace();}
+		//now restore the state of each of the checkboxes in the arraylist of actual jcheckbox objects(checkboxList).
+		for(int i=0;i<256;i++){
+			JCheckBox check = (JCheckBox) checkboxList.get(i);
+			if(checkboxState[i]){
+				check.setSelected(true);
+			}else{
+				check.setSelected(false);
+			}
+		}
+		sequencer.stop(); // now stop whatever is currently playing and rebuild the sequence using the new state of the cdheckboxs in the arraylist
+		buildTrackAndStart();
+	}
+
+
+
+}
+
